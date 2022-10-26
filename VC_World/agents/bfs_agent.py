@@ -11,7 +11,6 @@ class BFSAgent(Agent):
         while len(frontier) > 0:
             current_node = frontier.pop(0)
             current_state = current_node[0]
-            print(current_state)
             if self.problem.is_goal_state(current_state):
                 return current_node[1]
             for action in self.problem.get_applicable_actions(current_state):
