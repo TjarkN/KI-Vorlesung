@@ -4,7 +4,7 @@ from vc_logic import Building, VC, VCBS
 from random import choice, seed
 #from agents.prob_dfs_agent import ProbDFSAgent
 #from agents.and_or_agent import AndOrAgent
-#from agents.dfs_agent import DFSAgent
+from agents.dfs_agent import DFSAgent
 from agents.bfs_agent import BFSAgent
 #from agents.iddfs_agent import IDDFSAgent
 
@@ -14,16 +14,16 @@ import time
 seed_value = None
 if seed_value is not None:
     seed(seed_value)
-size = (2, 3)
+size = (1, 2)
 dirt_rate = 0.6
 building = Building(size, dirt_rate, seed=seed_value)
 vc = VC(choice([[x, y] for x in range(size[0]) for y in range(size[1])]), building, random_action_rate=0)
 #vc =VCBS(choice([[x,y] for x in range(size[0]) for y in range(size[1])]), building, random_action_rate= 0, perception=True)
-#agent = DFSAgent(vc)
+agent = DFSAgent(vc)
 #agent = IDDFSAgent(vc)
 #agent = GreedyBFSAgent(vc)
 #agent = AStarAgent(vc)
-agent = BFSAgent(vc)
+#agent = BFSAgent(vc)
 #agent = ProbDFSAgent(vc)
 #agent = AndOrAgent(vc)
 ai_active = True

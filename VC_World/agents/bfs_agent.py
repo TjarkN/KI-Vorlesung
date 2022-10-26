@@ -16,7 +16,7 @@ class BFSAgent(Agent):
                 return current_node[1]
             for action in self.problem.get_applicable_actions(current_state):
                 new_state = self.problem.perform_action(current_state,action)
-                if new_state not in visited_states:
+                if new_state.to_state() not in visited_states:
                     visited_states.append(new_state.to_state())
                     actions = current_node[1][:]
                     actions.append(action)
