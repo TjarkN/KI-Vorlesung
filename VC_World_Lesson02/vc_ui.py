@@ -1,44 +1,30 @@
 #pip install pgzero
 import pgzrun
-from vc_logic import Building, VC, VCBS
-from random import choice, seed
-#from agents.prob_dfs_agent import ProbDFSAgent
-#from agents.and_or_agent import AndOrAgent
-from agents.dfs_agent import DFSAgent
-from agents.bfs_agent import BFSAgent
-from agents.iddfs_agent import IDDFSAgent
-from agents.greedy_bfs_agent import GreedyBFSAgent
-from agents.a_star_agent import AStarAgent
 
+from vc_logic import Environment
 import time
+from agents.dfs_agent import DFSAgent
 
-#create game environment
-seed_value = None
-if seed_value is not None:
-    seed(seed_value)
-size = (2, 2)
-dirt_rate = 0.6
-building = Building(size, dirt_rate, seed=seed_value)
-vc = VC(choice([[x, y] for x in range(size[0]) for y in range(size[1])]), building, random_action_rate=0)
-#vc =VCBS(choice([[x,y] for x in range(size[0]) for y in range(size[1])]), building, random_action_rate= 0, perception=True)
+env = Environment(size=(2, 2), seed_value=None)
+
+#random_env
+env = Environment(size=(2, 3), seed_value=None, random_action_rate=0.2)
 #agent = DFSAgent(vc)
-agent = IDDFSAgent(vc)
-#agent = GreedyBFSAgent(vc, size)
-#agent = AStarAgent(vc)
-#agent = BFSAgent(vc)
-#agent = ProbDFSAgent(vc)
-#agent = AndOrAgent(vc)
-ai_active = True
 
-#GUI
-width_room = 274
-height_room = 240
+
+agent = DFSAgent(env.vc)
+
+size = env.size
+building = env.building
+vc = env.vc
+width_room = env.width_room
+height_room = env.height_room
 
 TITLE = "Vacuum-cleaner world"
 WIDTH = size[0]*width_room
 HEIGHT = size[1]*height_room
-
 vc_gui = Actor("vc.png")
+ai_active=True
 
 dirt = {}
 for x in range(building.rooms.shape[0]):
@@ -73,7 +59,7 @@ def draw():
         screen.draw.text(winning_text, (50, 30), color="black", fontsize=40)
 
 
-def update():
+def update(env_gui):
     if building.dirty_rooms > 0 and ai_active:
         action = agent.act()
         if action is not None:
