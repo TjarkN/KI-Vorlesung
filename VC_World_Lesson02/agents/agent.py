@@ -6,7 +6,6 @@ class Agent:
         self.problem = problem
         self.action_plan = []
         self.planning_index = 0
-        self.old_state = None
 
     def plan(self, current_state):
         actions = []
@@ -15,15 +14,8 @@ class Agent:
     def act(self):
         if len(self.action_plan) == 0:
             #percept
-
             current_state= self.problem.get_current_state()
-            if len(self.action_plan)== 0:
-                self.action_plan = self.plan(current_state)
-            if len(self.action_plan)>self.planning_index:
-                if self.planning_index =
-            """ if not self.old_state == current_state:
-                self.action_plan = self.action_plan[1:]"""
-            #search
+            #serach
 
 
             pr = cProfile.Profile()
@@ -44,7 +36,7 @@ class Agent:
                         self.action_plan = action[k]
                         action =self.action_plan[0]
                         break
-
+            self.action_plan = self.action_plan[1:]
             return action
         """
         if len(self.action_plan) > 0 and len(self.action_plan) > self.planning_index:

@@ -4,15 +4,19 @@ import pgzrun
 from vc_logic import Environment
 import time
 from agents.dfs_agent import DFSAgent
+from agents.and_or_agent import AndOrAgent
+from agents.ao_agent import AO_Agent
 
-env = Environment(size=(2, 2), seed_value=None)
+#env = Environment(size=(2, 2), seed_value=None)
 
 #random_env
-env = Environment(size=(2, 3), seed_value=None, random_action_rate=0.2)
+#env = Environment(size=(2, 3), seed_value=None, random_action_rate=0.2)
+env = Environment(size=(2, 1), seed_value=None, random_action_rate=0., perception=True)
 #agent = DFSAgent(vc)
 
 
-agent = DFSAgent(env.vc)
+#agent = DFSAgent(env.vc)
+agent = AO_Agent(env.vc)
 
 size = env.size
 building = env.building
