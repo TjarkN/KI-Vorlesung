@@ -6,6 +6,7 @@ import time
 from random import choice
 from agents.random_agent import RandomGameAgent
 from agents.minimax_agent import MinimaxAgent
+from agents.alpha_beta_agent import AlphaBetaAgent
 
 
 # random_env
@@ -13,7 +14,8 @@ env = Environment(board_size=(4, 8), step_range=(1, 3), obstacle_probability=0.2
 ai_active = True
 
 opponent = RandomGameAgent(env.rush)
-agent = MinimaxAgent(env.rush)
+#agent = MinimaxAgent(env.rush)
+agent = AlphaBetaAgent(env.rush, 4)
 
 size = env.rush.board_size
 rush = env.rush
