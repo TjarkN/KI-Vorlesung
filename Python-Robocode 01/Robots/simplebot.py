@@ -2,23 +2,21 @@
 # -*- coding: utf-8 -*-
 from AI.actions import Action
 from AI.state import State
-from random import shuffle
 
 from Objects.robot import Robot  # Import a base Robot
 
 
-class MiniMaxAgent(Robot):  # Create a Robot
+class Simplebot(Robot):  # Create a Robot
 
 
     def init(self):  # To initialyse your robot
 
         # Feel free to customize: Set the bot color in RGB
-        self.setColor(255, 192, 203) # 197/0/132
-
+        self.setColor(0, 0, 100)
         self.setGunColor(0, 0, 100)
         self.setRadarColor(0, 60, 0)
         self.setBulletsColor(255, 150, 150)
-        self.maxDepth = 3
+        self.maxDepth = 5
 
         #Don't Change
         self.setRadarField("thin")
@@ -51,51 +49,6 @@ class MiniMaxAgent(Robot):  # Create a Robot
             - move 50 points backward: self.backwards()
             - shoots cost 3 points of energy (when the enemy is hit he gets 9 points damage and you receive 6 points cure): self.shoot()
         """
-        state = State(energy_self=self.energy_left_self(),
-                      energy_enemy=self.energy_left_enemy(),
-                      shot_possibly_by_enemy=self.shot_possible_by_enemy(),
-                      shot_possibly_at_enemy=self.shot_possible_at_enemy(),
-                      pos_self=self.getPosition(),
-                      pos_enemy=self.getPosition_enemy(),
-                      angle_self=self.getGunHeading(),
-                      angle_enemy=self.getGunHeading_enemy(),
-                      map_size=self.getMapSize())
-        action = self.__minimax(state, current_depth=0)[1]
-        possible_actions = state.get_possible_actions(enemy=False)
-        if action == 'turn_left' or action == 'turn_right':
-            self.turn(possible_actions[action])
-        elif action == 'forward' or action == 'backward':
-            self.move(possible_actions[action])
-        else:
-            self.fire(possible_actions[action])
-
-    def __minimax(self, state, current_depth):
-
-        if current_depth == self.maxDepth or state.is_terminal():
-            eval = state.eval()[1]
-            return eval, ""
-
-        is_max_turn = True if current_depth % 2 == 0 else False
-        possible_action = state.get_possible_actions(enemy=not is_max_turn)
-        actions = list(possible_action.keys()) if type(possible_action) == dict else possible_action
-
-        shuffle(actions)  # randomness
-        best_value = float('-inf') if is_max_turn else float('inf')
-        action_target = ""
-        for action in actions:
-            new_state = state.apply_action(enemy=not is_max_turn, action=action)
-
-            eval_child, _ = self.__minimax(new_state, current_depth + 1)
-
-            if is_max_turn and best_value < eval_child:
-                best_value = eval_child
-                action_target = action
-
-            elif (not is_max_turn) and best_value > eval_child:
-                best_value = eval_child
-                action_target = action
-
-        return best_value, action_target
 
     def eval(self, state):
         """implement your evaluation function here"""

@@ -13,11 +13,11 @@ class MiniMaxAgent(Robot):  # Create a Robot
     def init(self):  # To initialyse your robot
 
         # Feel free to customize: Set the bot color in RGB
-        self.setColor(255, 192, 203) # 197/0/132
+        self.setColor(0, 155, 187) # 197/0/132
 
-        self.setGunColor(0, 0, 100)
-        self.setRadarColor(0, 60, 0)
-        self.setBulletsColor(255, 150, 150)
+        self.setGunColor(0, 155, 187)
+        self.setRadarColor(0, 155, 187)
+        self.setBulletsColor(0, 155, 187)
         self.maxDepth = 3
 
         #Don't Change
