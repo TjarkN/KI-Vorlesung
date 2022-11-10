@@ -6,18 +6,17 @@ from AI.state import State
 from Objects.robot import Robot  # Import a base Robot
 from random import shuffle
 
-
-class AlphaBetaAgent(Robot):  # Create a Robot
+class WallE(Robot):  # Create a Robot
 
 
     def init(self):  # To initialyse your robot
 
         # Feel free to customize: Set the bot color in RGB
-        self.setColor(197,0,132)
-        self.setGunColor(197,0,132)
-        self.setRadarColor(197, 0, 132)
-        self.setBulletsColor(197, 0, 132)
-        self.maxDepth = 10
+        self.setColor(250, 0, 98)
+        self.setGunColor(255, 207, 255)
+        self.setRadarColor(254, 95, 245)
+        self.setBulletsColor(204, 0, 35)
+        self.maxDepth = 5
 
         #Don't Change
         self.setRadarField("thin")
@@ -55,7 +54,7 @@ class AlphaBetaAgent(Robot):  # Create a Robot
                       angle_self=self.getGunHeading(),
                       angle_enemy=self.getGunHeading_enemy(),
                       map_size=self.getMapSize())
-        #action = self.__minimax(state, current_depth=0)[1]
+        # action = self.__minimax(state, current_depth=0)[1]
         evaluation, action = self.alpha_beta_search(state)
         if action == "turn_right":
             self.turn_right()
@@ -69,13 +68,13 @@ class AlphaBetaAgent(Robot):  # Create a Robot
             self.shoot()
 
     def alpha_beta_search(self, state):
-        #player = self.problem.get_player()
+        # player = self.problem.get_player()
         evaluation, action = self.__max_value(state=state, alpha=float('-inf'), beta=float('inf'), current_depth=0)
         return evaluation, action
 
     def __max_value(self, state, alpha, beta, current_depth):
         if current_depth == self.maxDepth or state.is_terminal():
-            return state.eval()[1], ""
+            return self.eval(state)[1], ""
 
         v = float('-inf')
         is_max_turn = (current_depth % 2 == 0)
@@ -94,7 +93,7 @@ class AlphaBetaAgent(Robot):  # Create a Robot
 
     def __min_value(self, state, alpha, beta, current_depth):
         if current_depth == self.maxDepth or state.is_terminal():
-            return state.eval()[1], ""
+            return self.eval(state)[1], ""
 
         v = float('inf')
         is_max_turn = (current_depth % 2 == 0)
@@ -111,7 +110,6 @@ class AlphaBetaAgent(Robot):  # Create a Robot
                 return v, move
         return v, move
 
-
     def __minimax(self, state: State, current_depth):
         if current_depth == self.maxDepth or state.is_terminal():
             eval = state.eval()[1]
@@ -120,7 +118,6 @@ class AlphaBetaAgent(Robot):  # Create a Robot
         is_max_turn = (current_depth % 2 == 0)  # 1 if current_depth even, 0 else
         possible_action = state.get_possible_actions(enemy=not is_max_turn)
         actions = list(possible_action.keys()) if type(possible_action) == dict else possible_action
-
 
         shuffle(actions)  # randomness
         best_value = float('-inf') if is_max_turn else float('inf')
@@ -140,31 +137,35 @@ class AlphaBetaAgent(Robot):  # Create a Robot
         return best_value, action_target
 
     def eval(self, state):
-        """implement your evaluation function here"""
-        utility = 0
+        utility = 1 * (state.energy_self - state.energy_enemy)
+
+        if state.energy_enemy <= 0:
+            utility += 1000
+        if state.energy_self <= 0:
+            utility -= 1000
+
+        angle_to_enemy = Action.angleTo(state.pos_self, state.pos_enemy, state.angle_self)
+        state.self_faces_enemy = angle_to_enemy
+        #print(f"Winkel zum Gegner: {angle_to_enemy}")
+        utility -= 2 * angle_to_enemy
+        angle_to_self = Action.angleTo(state.pos_enemy, state.pos_self, state.angle_enemy)
+        state.enemy_faces_self = angle_to_self
+        utility += angle_to_self
+
+        if state.shot_possibly_by_enemy:
+            utility -= 100
+        if state.shot_possibly_at_enemy:
+            utility += 100
+
         return self, utility
 
 
     def onHitWall(self):
         self.reset()  # To reset the run fonction to the begining (auomatically called on hitWall, and robotHit event)
         self.rPrint('ouch! a wall !')
-        self.move(-100)
 
     def sensors(self):  # NECESARY FOR THE GAME
-        """Tick each frame to have datas about the game"""
-
-        pos = self.getPosition()  # return the center of the bot
-        x = pos.x()  # get the x coordinate
-        y = pos.y()  # get the y coordinate
-
-        angle = self.getGunHeading()  # Returns the direction that the robot's gun is facing
-        angle = self.getHeading()  # Returns the direction that the robot is facing
-        angle = self.getRadarHeading()  # Returns the direction that the robot's radar is facing
-        list = self.getEnemiesLeft()  # return a list of the enemies alive in the battle
-        for robot in list:
-            id = robot["id"]
-            name = robot["name"]
-            # each element of the list is a dictionnary with the bot's id and the bot's name
+        pass
 
     def onRobotHit(self, robotId, robotName):  # when My bot hit another
         self.rPrint('collision with:' + str(robotId))
@@ -174,7 +175,6 @@ class AlphaBetaAgent(Robot):  # Create a Robot
 
     def onHitByBullet(self, bulletBotId, bulletBotName, bulletPower):  # NECESARY FOR THE GAME
         """ When i'm hit by a bullet"""
-        #self.reset()  # To reset the run function to the begining (auomatically called on hitWall, and robotHit event)
         self.rPrint("hit by " + str(bulletBotId) + "with power:" + str(bulletPower))
 
     def onBulletHit(self, botId, bulletId):  # NECESARY FOR THE GAME
@@ -189,14 +189,10 @@ class AlphaBetaAgent(Robot):  # Create a Robot
         """When my bot die"""
         self.rPrint("damn I'm Dead")
 
-
     def onTargetSpotted(self, botId, botName, botPos):  # NECESARY FOR THE GAME
         "when the bot see another one"
-        self.gunTurn(5)
-        self.stop()
-
         self.fire(5)
-        self.rPrint("I see the bot:" + str(botId) + "on position: x:" + str(botPos.x()) + " , y:" + str(botPos.y()))
+        self.rPrint("I see the bot:" + str(botId) + "on position: x:" + str(botPos[0]) + " , y:" + str(botPos[1]))
 
     def onEnemyDeath(self):
         pass
