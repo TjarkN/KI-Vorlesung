@@ -64,8 +64,22 @@ class KnowledgeBase():
                     self.KB[literal].remove(clause)
 
     def resolution(self, clause=None):
-        #here your code
-        return
+
+        clauses = self.KB
+        new = []
+        while True:
+            for c in self.KB:
+                resolvents = self.resolve(c[0],c[1])
+                if resolvents == []:
+                    return True
+                new.append(resolvents)
+            if new in clauses:
+                return False
+            clauses = clauses.append(new)
+
+    def resolve(self, ci, cj):
+        #Clever resolvement
+        pass
 
     def has_double_symbol(self,clause):
         symbols = []
@@ -125,6 +139,7 @@ class HybridAgent(Agent):
         else:
             self.KB.tell([(False, f"OK_{pos[0]}_{min(pos[1] +1,self.m-1)}_{self.t}")], True)
         self.t += 1
+
 
 
 def set_up_ww(size):
