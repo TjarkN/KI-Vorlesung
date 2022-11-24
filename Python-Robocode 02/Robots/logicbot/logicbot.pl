@@ -3,7 +3,7 @@
 
 %fluents, changing over time, (should be only dynamically added from the python programm
 :- dynamic fluent/1.
-%e.g.fluent(energy(self,100)).
+fluent(energy(self,100)).
 
 %facts, unlike fluents, don't change
 :- dynamic fact/1.
@@ -12,14 +12,14 @@ fact(turn_radian(RAD)):-RAD is pi/4.
 fact(robot_size(25.0)).
 fact(enemies(self,enemy)):-self\=enemy.
 
-%%precondistions for the actions	
+%%precondistions for the actions
 poss(setShotPossibleAt(Self,Enemy), S) :-
 	holds(pos(Self,[_,_]), S),
 	holds(pos(Enemy,[_,_]), S),
 	holds(orientation(Self,_), S),
 	fact(robot_size(_)),
 	(fact(enemies(Self,Enemy));fact(enemies(Enemy,Self))).
-	
+
 poss(addEngery(X,5), S) :-
     holds(energy(X, _), S).
 
@@ -31,9 +31,9 @@ result(S1, setShotPossibleAt(Self,Enemy), S2) :-
 	holds(orientation(Self,SO), S1),
 	fact(robot_size(RS)),
 	%Vektor, der von Self auf Enemy zeigt
-	Dir_EX is EX-SX, 
+	Dir_EX is EX-SX,
 	Dir_EY is EY-SY,
-	%Blickrichtungsvektor von Self 
+	%Blickrichtungsvektor von Self
 	Dir_SX is -sin(SO),
 	Dir_SY is  cos(SO),
 	%Betrag zur Normierung berechnen
@@ -58,7 +58,7 @@ result(S1, addEngery(X,5), S2) :-
 	Eplus5 is E + 5,
     replace_fluent(S1, energy(X, E),
                    energy(X, Eplus5), S2).
-                  
-%goal state definition	
+
+%goal state definition
 %goal(orientation(self, O)):- O is pi.
-%goal(energy(self,100.0)).
+goal(energy(self,100.0)).
